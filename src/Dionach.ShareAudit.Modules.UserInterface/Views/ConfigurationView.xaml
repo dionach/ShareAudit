@@ -1,0 +1,212 @@
+﻿<UserControl
+    x:Class="Dionach.ShareAudit.Modules.UserInterface.Views.ConfigurationView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Dionach.ShareAudit.Modules.UserInterface.Converters"
+    xmlns:helpers="clr-namespace:Dionach.ShareAudit.Modules.UserInterface.Helpers"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <DockPanel LastChildFill="True">
+        <StackPanel
+            HorizontalAlignment="Right"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Command="{Binding Cancel}"
+                Content="Cancel" />
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Command="{Binding Next}"
+                Content="Next" />
+        </StackPanel>
+        <ScrollViewer DockPanel.Dock="Top">
+            <StackPanel>
+                <GroupBox Margin="5" Header="Credentials">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.ColumnSpan="2"
+                            Margin="5"
+                            Text="Enter the credentials of the account with which you wish to perform the audit. Typically this should be a low privileged account, representative of a &quot;normal&quot; user."
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="5"
+                            Text="Domain:" />
+                        <StackPanel Grid.Row="1" Grid.Column="1">
+                            <TextBox Margin="5" Text="{Binding Project.Configuration.Credentials.Domain}">
+                                <TextBox.IsEnabled>
+                                    <MultiBinding Converter="{x:Static converters:AndTrueToTrueMultiConverter.Default}">
+                                        <Binding Path="IsProjectUnconfigured" />
+                                        <Binding Converter="{x:Static converters:BoolInversionConverter.Default}" Path="Project.Configuration.Credentials.UseCurrentCredentials" />
+                                    </MultiBinding>
+                                </TextBox.IsEnabled>
+                            </TextBox>
+                            <TextBlock
+                                Margin="5"
+                                Foreground="Red"
+                                Text="{Binding ErrorMessageForDomain}"
+                                Visibility="{Binding ErrorMessageForDomain, Converter={x:Static converters:StringIsNullOrEmptyToCollapsedConverter.Default}}" />
+                        </StackPanel>
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="5"
+                            Text="Username:" />
+                        <StackPanel Grid.Row="2" Grid.Column="1">
+                            <TextBox Margin="5" Text="{Binding Project.Configuration.Credentials.Username}">
+                                <TextBox.IsEnabled>
+                                    <MultiBinding Converter="{x:Static converters:AndTrueToTrueMultiConverter.Default}">
+                                        <Binding Path="IsProjectUnconfigured" />
+                                        <Binding Converter="{x:Static converters:BoolInversionConverter.Default}" Path="Project.Configuration.Credentials.UseCurrentCredentials" />
+                                    </MultiBinding>
+                                </TextBox.IsEnabled>
+                            </TextBox>
+                            <TextBlock
+                                Margin="5"
+                                Foreground="Red"
+                                Text="{Binding ErrorMessageForUsername}"
+                                Visibility="{Binding ErrorMessageForUsername, Converter={x:Static converters:StringIsNullOrEmptyToCollapsedConverter.Default}}" />
+                        </StackPanel>
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Margin="5"
+                            Text="Password:" />
+                        <StackPanel Grid.Row="3" Grid.Column="1">
+                            <PasswordBox
+                                Margin="5"
+                                helpers:PasswordHelper.Attach="True"
+                                helpers:PasswordHelper.Password="{Binding Project.Configuration.Credentials.Password, Mode=TwoWay}">
+                                <PasswordBox.IsEnabled>
+                                    <MultiBinding Converter="{x:Static converters:AndTrueToTrueMultiConverter.Default}">
+                                        <Binding Converter="{x:Static converters:BoolInversionConverter.Default}" Path="Project.Configuration.IsReadOnly" />
+                                        <Binding Converter="{x:Static converters:BoolInversionConverter.Default}" Path="Project.Configuration.Credentials.UseCurrentCredentials" />
+                                    </MultiBinding>
+                                </PasswordBox.IsEnabled>
+                            </PasswordBox>
+                            <TextBlock
+                                Margin="5"
+                                Foreground="Red"
+                                Text="{Binding ErrorMessageForPassword}"
+                                Visibility="{Binding ErrorMessageForPassword, Converter={x:Static converters:StringIsNullOrEmptyToCollapsedConverter.Default}}" />
+                        </StackPanel>
+                        <TextBlock
+                            Grid.Row="4"
+                            Grid.ColumnSpan="2"
+                            Margin="5"
+                            Foreground="Red"
+                            Text="{Binding ErrorMessageForCredentials}"
+                            Visibility="{Binding ErrorMessageForCredentials, Converter={x:Static converters:StringIsNullOrEmptyToCollapsedConverter.Default}}" />
+                        <CheckBox
+                            Grid.Row="5"
+                            Grid.ColumnSpan="2"
+                            Margin="5"
+                            Content="Open as readonly"
+                            IsChecked="{Binding Project.Configuration.IsReadOnly}"
+                            IsEnabled="{Binding Project.Configuration.Credentials.Password, Converter={x:Static converters:StringIsNullOrEmptyToTrueConverter.Default}}"
+                            Visibility="{Binding IsProjectUnconfigured, Converter={x:Static converters:IsTrueToCollapsedConverter.Default}}" />
+                        <CheckBox
+                            Grid.Row="5"
+                            Grid.ColumnSpan="2"
+                            Margin="5"
+                            Command="{Binding UseCurrentCredentials}"
+                            Content="Use current credentials"
+                            IsChecked="{Binding Project.Configuration.Credentials.UseCurrentCredentials}"
+                            Visibility="{Binding IsProjectUnconfigured, Converter={x:Static converters:IsFalseToCollapsedConverter.Default}}" />
+                    </Grid>
+                </GroupBox>
+                <GroupBox Margin="5" Header="Scope">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="5"
+                            Text="Enter the scope, using single IP addresses, CIDR ranges, or FQDNs, separated by newlines, commas, or semicolons. Alternatively, you can import the scope from Active Directory."
+                            TextWrapping="Wrap" />
+                        <TextBox
+                            Margin="5"
+                            AcceptsReturn="True"
+                            IsEnabled="{Binding IsProjectUnconfigured}"
+                            Text="{Binding Project.Configuration.Scope, UpdateSourceTrigger=PropertyChanged}"
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            Margin="5"
+                            Foreground="Red"
+                            Text="{Binding ErrorMessageForScope}"
+                            Visibility="{Binding ErrorMessageForScope, Converter={x:Static converters:StringIsNullOrEmptyToCollapsedConverter.Default}}" />
+                        <Button
+                            MinWidth="75"
+                            Margin="5"
+                            Padding="5"
+                            HorizontalAlignment="Right"
+                            Command="{Binding Import}"
+                            Content="Import" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Margin="5" Header="Advanced">
+                    <StackPanel>
+                        <CheckBox
+                            Margin="5"
+                            Content="Disable port scan"
+                            IsChecked="{Binding Project.Configuration.DisablePortScan}"
+                            IsEnabled="{Binding IsProjectUnconfigured}" />
+                        <TextBlock
+                            Margin="25,0,5,5"
+                            Text="(This will result in audits taking longer, but potentially being more accurate on slow networks)"
+                            TextWrapping="Wrap" />
+                        <CheckBox
+                            Margin="5"
+                            Content="Use verbatim scope"
+                            IsChecked="{Binding Project.Configuration.UseVerbatimScope}"
+                            IsEnabled="{Binding IsProjectUnconfigured}" />
+                        <TextBlock
+                            Margin="25,0,5,5"
+                            Text="(By default, all hostnames entered in the scope will be mapped to IP addresses before starting the audit, which can cause issues where DNS contains stale or incorrect entries. This option will caused the scope to be audited exactly as entered. Note that this option is not compatible with CIDR ranges)"
+                            TextWrapping="Wrap" />
+                        <CheckBox
+                            Margin="5"
+                            Content="Disable reverse DNS lookup"
+                            IsChecked="{Binding Project.Configuration.DisableReverseDnsLookup}"
+                            IsEnabled="{Binding IsProjectUnconfigured}" />
+                        <TextBlock
+                            Margin="25,0,5,5"
+                            Text="(This will prevent attempting to map IP addresses to hostnames, which can be problematic in networks without reverse DNS zones correctly configured)"
+                            TextWrapping="Wrap" />
+                        <CheckBox
+                            Margin="5"
+                            Content="Use alternate authentication method"
+                            IsChecked="{Binding Project.Configuration.UseAlternateAuthenticationMethod}">
+                            <CheckBox.IsEnabled>
+                                <MultiBinding Converter="{x:Static converters:AndTrueToTrueMultiConverter.Default}">
+                                    <Binding Path="IsProjectUnconfigured" />
+                                    <Binding Converter="{x:Static converters:BoolInversionConverter.Default}" Path="Project.Configuration.Credentials.UseCurrentCredentials" />
+                                </MultiBinding>
+                            </CheckBox.IsEnabled>
+                        </CheckBox>
+                        <TextBlock
+                            Margin="25,0,5,5"
+                            Text="(This will use Windows impersonation when connecting to target systems, instead of creating network resource connections)"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

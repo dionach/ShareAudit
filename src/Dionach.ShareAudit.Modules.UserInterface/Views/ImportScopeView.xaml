@@ -1,0 +1,71 @@
+﻿<UserControl
+    x:Class="Dionach.ShareAudit.Modules.UserInterface.Views.ImportScopeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Dionach.ShareAudit.Modules.UserInterface.Converters"
+    xmlns:model="clr-namespace:Dionach.ShareAudit.Model;assembly=Dionach.ShareAudit.Model"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <DockPanel LastChildFill="True">
+        <StackPanel
+            HorizontalAlignment="Right"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Command="{Binding Cancel}"
+                Content="Cancel" />
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Command="{Binding Import}"
+                Content="Import" />
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock
+                Margin="5"
+                Text="The import process will connect to the Active Directory domain and enumerate all computer accounts that meet the following criteria:"
+                TextWrapping="Wrap" />
+            <GroupBox Margin="5" Header="Computer Type">
+                <StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="5"
+                            Text="Domain:" />
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="5"
+                            Text="{Binding Domain}" />
+                    </Grid>
+                    <StackPanel>
+                        <RadioButton
+                            Margin="5"
+                            Content="Servers"
+                            IsChecked="{Binding ImportComputerType, Converter={x:Static converters:ComparisonConverter.Default}, ConverterParameter={x:Static model:ImportComputerType.Servers}}" />
+                        <RadioButton
+                            Margin="5"
+                            Content="Workstations"
+                            IsChecked="{Binding ImportComputerType, Converter={x:Static converters:ComparisonConverter.Default}, ConverterParameter={x:Static model:ImportComputerType.Workstations}}" />
+                        <RadioButton
+                            Margin="5"
+                            Content="All"
+                            IsChecked="{Binding ImportComputerType, Converter={x:Static converters:ComparisonConverter.Default}, ConverterParameter={x:Static model:ImportComputerType.All}}" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </DockPanel>
+</UserControl>

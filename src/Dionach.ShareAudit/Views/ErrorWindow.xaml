@@ -1,0 +1,38 @@
+﻿<Window
+    x:Class="Dionach.ShareAudit.Views.ErrorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Dionach.ShareAudit.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Error"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <DockPanel LastChildFill="True">
+        <StackPanel
+            HorizontalAlignment="Center"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Click="ExitButton_Click"
+                Content="Exit" />
+        </StackPanel>
+        <ScrollViewer>
+            <StackPanel>
+                <TextBlock Margin="5" Text="A fatal error occurred" />
+                <TextBox
+                    x:Name="_errorTextBox"
+                    Margin="5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    FontFamily="Consolas"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

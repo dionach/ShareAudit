@@ -1,0 +1,127 @@
+﻿<UserControl
+    x:Class="Dionach.ShareAudit.Modules.UserInterface.Views.HelpView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <DockPanel LastChildFill="True">
+        <StackPanel
+            HorizontalAlignment="Right"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Command="{Binding Back}"
+                Content="Back" />
+        </StackPanel>
+
+        <ScrollViewer DockPanel.Dock="Top">
+            <StackPanel>
+                <TextBlock
+                    Margin="5"
+                    FontWeight="Bold"
+                    Text="What is share auditing?"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="Share auditing is the process of reviewing file shares within an Active Directory environment in order to determine whether any content is inappropriately accessible."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    FontWeight="Bold"
+                    Text="What does this tool do?"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="ShareAudit impersonates the provided credentials and attempts to access the given systems. It will then enumerate all shares, including hidden shares, and retrieve the first level contents of the shares. It will display whether each file or folder is readable or writable to the impersonated user, as well as display the NTFS permissions. For files, ShareAudit will also retrieve the first 1024 bytes of the file, to add in determining whether the file has sensitive content."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="Once the initial audit of the first level of all shares is complete, additional folders can also be audited using the right click menu. The reason to only audit the first level of each share automatically is that it is common to see very complex directory structures, that can take a very long time to process, and could be quickly identified as non-sensitive by the auditor."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="The right click menu on folders and files also has the option to reveal the item in explorer. This will open a new Explorer window that can be used to browse the share as the impersonated user."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    FontWeight="Bold"
+                    Text="How do I use this tool?"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="When creating a new project, you will be first asked for the credentials you wish to impersonate. This would typically be a low privileged user, representative of a normal domain user. In larger organisations, you may wish to run ShareAudit several times in order to represent users from different departments."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="When entering credentials, you will need to specify the user's domain (which is not necessarily the same as the domain you wish to test), username, and password."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="Alternatively, you can select to use the current Windows credentials, if you are already logged in as the target user. This can be more reliable, as it prevents the need to impersonate the target user."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="Next, you will need to enter the scope, which is the list of systems you wish to audit. The scope can either be entered manually or imported from Active Directory."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="Once the configuration is complete, you will be presented with the audit page, press start to begin the scan. You will see systems appear and disappear as they are audited and found to be accessible or inaccessible. Whilst you can interact with the result whilst the scan is running, it is best to wait for it to complete to ensure you are working with accurate results."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="Once complete, you can browse the result tree and select a share, folder, or file to view more information, including the effective permissions, NTFS permissions, and file previews."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="You can also right click folders and files to open in Explorer as the impersonated user and to audit additional folders that may be interesting."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="Results can also be exported to a CSV file once the audit is complete for processing with other tools."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    FontWeight="Bold"
+                    Text="What am I looking for in the results?"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Margin="5"
+                    Text="Whilst the nature of sensitive data will vary from organisation to organisation, common indicators include:"
+                    TextWrapping="Wrap" />
+                <BulletDecorator Margin="5">
+                    <BulletDecorator.Bullet>
+                        <Ellipse
+                            Width="8"
+                            Height="8"
+                            Margin="10,0,0,0"
+                            Fill="Black"
+                            Stroke="Black"
+                            StrokeThickness="1" />
+                    </BulletDecorator.Bullet>
+                    <TextBlock
+                        Margin="20,0,0,0"
+                        Text="Unnecessary writable files or folders. Write access should be as restrictive as possible to limit the impact of ransomware attacks."
+                        TextWrapping="Wrap" />
+                </BulletDecorator>
+                <BulletDecorator Margin="5">
+                    <BulletDecorator.Bullet>
+                        <Ellipse
+                            Width="8"
+                            Height="8"
+                            Margin="10,0,0,0"
+                            Fill="Black"
+                            Stroke="Black"
+                            StrokeThickness="1" />
+                    </BulletDecorator.Bullet>
+                    <TextBlock
+                        Margin="20,0,0,0"
+                        Text="Access to administrative shares (ADMIN$, C$, etc), as this means the impersonated user has local admin rights on the system."
+                        TextWrapping="Wrap" />
+                </BulletDecorator>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

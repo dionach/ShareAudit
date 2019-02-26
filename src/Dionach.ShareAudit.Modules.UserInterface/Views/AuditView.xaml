@@ -1,0 +1,219 @@
+﻿<UserControl
+    x:Class="Dionach.ShareAudit.Modules.UserInterface.Views.AuditView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Dionach.ShareAudit.Modules.UserInterface.Converters"
+    xmlns:fa="http://schemas.fontawesome.io/icons/"
+    xmlns:helpers="clr-namespace:Dionach.ShareAudit.Modules.UserInterface.Helpers"
+    xmlns:model="clr-namespace:Dionach.ShareAudit.Model;assembly=Dionach.ShareAudit.Model"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <DockPanel LastChildFill="True">
+        <DockPanel.Resources>
+            <helpers:BindingProxy x:Key="Proxy" Data="{Binding}" />
+        </DockPanel.Resources>
+        <StackPanel
+            HorizontalAlignment="Right"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Command="{Binding Export}"
+                Content="Export"
+                Visibility="{Binding IsRunning, Converter={x:Static converters:IsTrueToCollapsedConverter.Default}}" />
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Command="{Binding StartAudit}"
+                Content="Start"
+                Visibility="{Binding IsRunning, Converter={x:Static converters:IsTrueToCollapsedConverter.Default}}" />
+            <Button
+                MinWidth="75"
+                Margin="5"
+                Padding="5"
+                Command="{Binding StopAudit}"
+                Content="Stop"
+                Visibility="{Binding IsRunning, Converter={x:Static converters:IsFalseToCollapsedConverter.Default}}" />
+        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TreeView
+                Grid.Row="0"
+                Margin="5"
+                helpers:TreeViewExtension.SelectItemOnRightClick="True"
+                helpers:TreeViewHelper.SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding Project.Hosts}"
+                VirtualizingPanel.IsVirtualizing="True">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="Visibility">
+                            <Setter.Value>
+                                <MultiBinding Converter="{x:Static converters:OrTrueToVisibleMultiConverter.Default}">
+                                    <Binding Path="Accessible" />
+                                    <Binding Converter="{x:Static converters:IsStateInProgressToBoolConverter.Default}" Path="State" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type model:Host}" ItemsSource="{Binding Shares}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" />
+                            <fa:ImageAwesome
+                                Width="10"
+                                Height="10"
+                                Margin="5,0,0,0"
+                                Foreground="Gray"
+                                Icon="Spinner"
+                                Spin="True">
+                                <fa:ImageAwesome.Visibility>
+                                    <MultiBinding Converter="{x:Static converters:AndTrueToVisibleMultiConverter.Default}">
+                                        <Binding Path="DataContext.IsRunning" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                        <Binding Converter="{x:Static converters:IsStateInProgressToBoolConverter.Default}" Path="State" />
+                                    </MultiBinding>
+                                </fa:ImageAwesome.Visibility>
+                            </fa:ImageAwesome>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type model:Share}" ItemsSource="{Binding FileSystemEntries}">
+                        <HierarchicalDataTemplate.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </Style>
+                        </HierarchicalDataTemplate.ItemContainerStyle>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Command="{Binding Source={StaticResource Proxy}, Path=Data.RevealInExplorer}" Header="Reveal In Explorer" />
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
+                            <Image
+                                Width="16"
+                                Height="16"
+                                Source="{Binding Type, Converter={x:Static converters:ShareTypeToIconSourceConverter.Default}}" />
+                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                Foreground="Red"
+                                Text="(Writable)"
+                                Visibility="{Binding EffectiveAccess.Write, Converter={x:Static converters:IsFalseToCollapsedConverter.Default}}" />
+                            <fa:ImageAwesome
+                                Width="10"
+                                Height="10"
+                                Margin="5,0,0,0"
+                                Foreground="Gray"
+                                Icon="Spinner"
+                                Spin="True">
+                                <fa:ImageAwesome.Visibility>
+                                    <MultiBinding Converter="{x:Static converters:AndTrueToVisibleMultiConverter.Default}">
+                                        <Binding Path="DataContext.IsRunning" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                        <Binding Converter="{x:Static converters:IsStateInProgressToBoolConverter.Default}" Path="State" />
+                                    </MultiBinding>
+                                </fa:ImageAwesome.Visibility>
+                            </fa:ImageAwesome>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type model:DirectoryEntry}" ItemsSource="{Binding FileSystemEntries}">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Command="{Binding Source={StaticResource Proxy}, Path=Data.AuditFolder}" Header="Audit Folder" />
+                                    <MenuItem Command="{Binding Source={StaticResource Proxy}, Path=Data.RevealInExplorer}" Header="Reveal In Explorer" />
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
+                            <Image
+                                Width="16"
+                                Height="16"
+                                Source="/Dionach.ShareAudit.Modules.UserInterface;component/Images/imageres_4.ico" />
+                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                Foreground="Red"
+                                Text="(Writable)"
+                                Visibility="{Binding EffectiveAccess.Write, Converter={x:Static converters:IsFalseToCollapsedConverter.Default}}" />
+                            <fa:ImageAwesome
+                                Width="10"
+                                Height="10"
+                                Margin="5,0,0,0"
+                                Foreground="Gray"
+                                Icon="Spinner"
+                                Spin="True">
+                                <fa:ImageAwesome.Visibility>
+                                    <MultiBinding Converter="{x:Static converters:AndTrueToVisibleMultiConverter.Default}">
+                                        <Binding Path="DataContext.IsRunning" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                        <Binding Converter="{x:Static converters:IsStateInProgressToBoolConverter.Default}" Path="State" />
+                                    </MultiBinding>
+                                </fa:ImageAwesome.Visibility>
+                            </fa:ImageAwesome>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                    <DataTemplate DataType="{x:Type model:FileEntry}">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Command="{Binding Source={StaticResource Proxy}, Path=Data.RevealInExplorer}" Header="Reveal In Explorer" />
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
+                            <Image
+                                Width="16"
+                                Height="16"
+                                Source="/Dionach.ShareAudit.Modules.UserInterface;component/Images/imageres_2.ico" />
+                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                Foreground="Red"
+                                Text="(Writable)"
+                                Visibility="{Binding EffectiveAccess.Write, Converter={x:Static converters:IsFalseToCollapsedConverter.Default}}" />
+                            <fa:ImageAwesome
+                                Width="10"
+                                Height="10"
+                                Margin="5,0,0,0"
+                                Foreground="Gray"
+                                Icon="Spinner"
+                                Spin="True">
+                                <fa:ImageAwesome.Visibility>
+                                    <MultiBinding Converter="{x:Static converters:AndTrueToVisibleMultiConverter.Default}">
+                                        <Binding Path="DataContext.IsRunning" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                                        <Binding Converter="{x:Static converters:IsStateInProgressToBoolConverter.Default}" Path="State" />
+                                    </MultiBinding>
+                                </fa:ImageAwesome.Visibility>
+                            </fa:ImageAwesome>
+                        </StackPanel>
+                    </DataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+            <GridSplitter
+                Grid.Row="1"
+                Height="1"
+                Margin="5,0,5,0"
+                HorizontalAlignment="Stretch" />
+            <ContentControl Grid.Row="2" Content="{Binding SelectedItem, Mode=OneWay}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate>
+                        <ScrollViewer Margin="5">
+                            <StackPanel>
+                                <TextBox
+                                    Margin="5"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    FontFamily="Consolas"
+                                    IsReadOnly="True"
+                                    Text="{Binding Converter={x:Static converters:ItemDetailToStringConverter.Default}, Mode=OneWay}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+        </Grid>
+    </DockPanel>
+</UserControl>

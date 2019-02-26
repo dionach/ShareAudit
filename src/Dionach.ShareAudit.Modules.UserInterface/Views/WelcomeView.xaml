@@ -1,0 +1,56 @@
+﻿<UserControl
+    x:Class="Dionach.ShareAudit.Modules.UserInterface.Views.WelcomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Dionach.ShareAudit.Modules.UserInterface.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <DockPanel LastChildFill="True">
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Left">
+                <Button
+                    MinWidth="75"
+                    Margin="5"
+                    Padding="5"
+                    Command="{Binding Help}"
+                    Content="Help" />
+            </StackPanel>
+            <StackPanel
+                HorizontalAlignment="Right"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
+                <Button
+                    MinWidth="75"
+                    Margin="5"
+                    Padding="5"
+                    Command="{Binding New}"
+                    Content="New" />
+                <Button
+                    MinWidth="75"
+                    Margin="5"
+                    Padding="5"
+                    Command="{Binding Load}"
+                    Content="Load" />
+            </StackPanel>
+        </DockPanel>
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            DockPanel.Dock="Top">
+            <Image
+                MaxWidth="800"
+                Margin="50"
+                Source="{Binding Banner}" />
+            <TextBlock
+                Margin="5"
+                Text="ShareAudit is a tool for auditing network share permissions in an Active Directory environment. To get started either create a new project or load an existing project. For more information regarding how to audit your network shares, select help."
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </DockPanel>
+</UserControl>
