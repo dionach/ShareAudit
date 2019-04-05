@@ -5,6 +5,6 @@ namespace Dionach.ShareAudit.Modules.Services
 {
     public interface IScopeExpansionService
     {
-        IEnumerable<IPAddress> ExpandScopeToIPAddresses(string scope);
+        IEnumerable<(string ipAddress, string fqdn)> ExpandScope(string scopeText, bool doNotExpandNamesToIPs);
     }
 }

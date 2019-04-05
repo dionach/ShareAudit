@@ -6,9 +6,14 @@ namespace Dionach.ShareAudit.Modules.Services
     {
         public bool IsTcpPortOpen(string host, ushort port, int millisecondsTimeout)
         {
+            return IsTcpPortOpen(host, port, millisecondsTimeout, AddressFamily.InterNetwork) || IsTcpPortOpen(host, port, millisecondsTimeout, AddressFamily.InterNetworkV6);
+        }
+
+        private bool IsTcpPortOpen(string host, ushort port, int millisecondsTimeout, AddressFamily addressFamily)
+        {
             try
             {
-                using (var client = new TcpClient())
+                using (var client = new TcpClient(addressFamily))
                 {
                     var result = client.BeginConnect(host, port, null, null);
                     var success = result.AsyncWaitHandle.WaitOne(millisecondsTimeout);

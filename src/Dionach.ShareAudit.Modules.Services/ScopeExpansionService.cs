@@ -15,15 +15,15 @@ namespace Dionach.ShareAudit.Modules.Services
             _dnsUtilitiesService = dnsUtilitiesService ?? throw new ArgumentNullException(nameof(dnsUtilitiesService));
         }
 
-        public IEnumerable<IPAddress> ExpandScopeToIPAddresses(string scope)
+        public IEnumerable<(string ipAddress, string fqdn)> ExpandScope(string scopeText, bool doNotExpandNamesToIPs)
         {
-            scope = scope ?? throw new ArgumentNullException(nameof(scope));
-            scope = scope.Replace(" ", string.Empty);
-            scope = scope.Replace("\t", string.Empty);
+            scopeText = scopeText ?? throw new ArgumentNullException(nameof(scopeText));
+            scopeText = scopeText.Replace(" ", string.Empty);
+            scopeText = scopeText.Replace("\t", string.Empty);
 
-            var lines = scope.Split(",;\r\n".ToCharArray());
+            var lines = scopeText.Split(",;\r\n".ToCharArray());
 
-            var scopeIPAddresses = new HashSet<IPAddress>();
+            var scope = new HashSet<(string ipAddress, string fqdn)>();
 
             foreach (var line in lines)
             {
@@ -40,25 +40,32 @@ namespace Dionach.ShareAudit.Modules.Services
                                     continue;
                                 }
 
-                                scopeIPAddresses.Add(ipAddress);
+                                scope.Add((ipAddress.ToString(), ipAddress.AddressFamily == AddressFamily.InterNetworkV6 ? $"{ipAddress.ToString().Replace(':', '-')}.ipv6-literal.net" : string.Empty));
                             }
                         }
                     }
                     else if (IPAddress.TryParse(line, out var ipAddress))
                     {
-                        scopeIPAddresses.Add(ipAddress);
+                        scope.Add((ipAddress.ToString(), ipAddress.AddressFamily == AddressFamily.InterNetworkV6 ? $"{ipAddress.ToString().Replace(':', '-')}.ipv6-literal.net" : string.Empty));
                     }
-                    else if (_dnsUtilitiesService.TryResolveHost(line, out var ipAddresses))
+                    else
                     {
-                        foreach (var address in ipAddresses)
+                        if (doNotExpandNamesToIPs)
                         {
-                            scopeIPAddresses.Add(address);
+                            scope.Add((string.Empty, line));
+                        }
+                        else if (_dnsUtilitiesService.TryResolveHost(line, out var ipAddresses))
+                        {
+                            foreach (var address in ipAddresses)
+                            {
+                                scope.Add((address.ToString(), address.AddressFamily == AddressFamily.InterNetworkV6 ? $"{address.ToString().Replace(':', '-')}.ipv6-literal.net" : string.Empty));
+                            }
                         }
                     }
                 }
             }
 
-            return scopeIPAddresses;
+            return scope;
         }
     }
 }

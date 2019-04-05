@@ -8,8 +8,8 @@ namespace Dionach.ShareAudit.Model
     public class Host : INotifyPropertyChanged
     {
         private bool _accessible;
+        private string _fqdn;
         private string _ipAddress;
-        private string _ptrRecord;
         private ObservableCollection<Share> _shares = new ObservableCollection<Share>();
         private HostState _state = HostState.New;
 
@@ -30,6 +30,22 @@ namespace Dionach.ShareAudit.Model
             }
         }
 
+        public string Fqdn
+        {
+            get => _fqdn;
+            set
+            {
+                if (value == _fqdn)
+                {
+                    return;
+                }
+
+                _fqdn = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Name));
+            }
+        }
+
         public string IPAddress
         {
             get => _ipAddress;
@@ -46,23 +62,7 @@ namespace Dionach.ShareAudit.Model
             }
         }
 
-        public string Name => string.IsNullOrEmpty(PtrRecord) ? IPAddress : PtrRecord;
-
-        public string PtrRecord
-        {
-            get => _ptrRecord;
-            set
-            {
-                if (value == _ptrRecord)
-                {
-                    return;
-                }
-
-                _ptrRecord = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Name));
-            }
-        }
+        public string Name => string.IsNullOrEmpty(Fqdn) ? IPAddress : Fqdn;
 
         public ObservableCollection<Share> Shares
         {

@@ -332,7 +332,7 @@ namespace Dionach.ShareAudit.Modules.Services
                 if (!_project.Configuration.DisableReverseDnsLookup && !string.IsNullOrEmpty(host.IPAddress))
                 {
                     var ptrRecord = _dnsUtilitiesService.GetPtrRecord(IPAddress.Parse(host.IPAddress));
-                    _uiContext.Send((_) => host.PtrRecord = ptrRecord, null);
+                    _uiContext.Send((_) => host.Fqdn = ptrRecord, null);
                 }
 
                 _uiContext.Send((_) => host.State = HostState.CheckingPorts, null);
@@ -385,48 +385,18 @@ namespace Dionach.ShareAudit.Modules.Services
             {
                 _uiContext.Send((_) => _project.Hosts = new ObservableCollection<Host>(), null);
 
-                if (_project.Configuration.UseVerbatimScope)
+                Parallel.ForEach(_scopeExpansionService.ExpandScope(_project.Configuration.Scope, _project.Configuration.UseVerbatimScope), _parallelOptions, (item) =>
                 {
-                    Parallel.ForEach(_project.Configuration.Scope.Split(',').Select(x => x.Trim()), _parallelOptions, (target) =>
-                    {
-                        if (IPAddress.TryParse(target, out var ipAddress))
+                    _uiContext.Send(
+                        (_) =>
                         {
-                            _uiContext.Send(
-                            (_) =>
+                            _project.Hosts.Add(new Host
                             {
-                                _project.Hosts.Add(new Host
-                                {
-                                    IPAddress = ipAddress.ToString()
-                                });
-                            }, null);
-                        }
-                        else
-                        {
-                            _uiContext.Send(
-                            (_) =>
-                            {
-                                _project.Hosts.Add(new Host
-                                {
-                                    PtrRecord = target
-                                });
-                            }, null);
-                        }
-                    });
-                }
-                else
-                {
-                    Parallel.ForEach(_scopeExpansionService.ExpandScopeToIPAddresses(_project.Configuration.Scope), _parallelOptions, (ipAddress) =>
-                    {
-                        _uiContext.Send(
-                            (_) =>
-                            {
-                                _project.Hosts.Add(new Host
-                                {
-                                    IPAddress = ipAddress.ToString()
-                                });
-                            }, null);
-                    });
-                }
+                                IPAddress = item.ipAddress,
+                                Fqdn = item.fqdn
+                            });
+                        }, null);
+                });
 
                 _uiContext.Send((_) => _project.State = ProjectState.AuditingHosts, null);
             }
