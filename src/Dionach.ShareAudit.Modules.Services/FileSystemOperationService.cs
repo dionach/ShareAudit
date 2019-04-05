@@ -42,6 +42,9 @@ namespace Dionach.ShareAudit.Modules.Services
                 {
                     authorizationRuleCollection = Directory.GetAccessControl(path).GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
                 }
+                catch (InvalidOperationException)
+                {
+                }
                 catch (UnauthorizedAccessException)
                 {
                 }
