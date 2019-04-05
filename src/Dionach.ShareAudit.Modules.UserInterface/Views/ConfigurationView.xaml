@@ -178,7 +178,7 @@
                             IsEnabled="{Binding IsProjectUnconfigured}" />
                         <TextBlock
                             Margin="25,0,5,5"
-                            Text="(By default, all hostnames entered in the scope will be mapped to IP addresses before starting the audit, which can cause issues where DNS contains stale or incorrect entries. This option will caused the scope to be audited exactly as entered. Note that this option is not compatible with CIDR ranges)"
+                            Text="(By default, all hostnames entered in the scope will be mapped to IP addresses before starting the audit, which can cause issues where DNS contains stale or incorrect entries. This option will cause the scope to be audited exactly as entered. Note that this option is not compatible with CIDR ranges)"
                             TextWrapping="Wrap" />
                         <CheckBox
                             Margin="5"
