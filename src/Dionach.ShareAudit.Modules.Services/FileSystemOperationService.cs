@@ -27,9 +27,6 @@ namespace Dionach.ShareAudit.Modules.Services
             catch (UnauthorizedAccessException)
             {
             }
-            catch (FileNotFoundException)
-            {
-            }
             catch (IOException)
             {
             }
@@ -48,6 +45,9 @@ namespace Dionach.ShareAudit.Modules.Services
                 catch (UnauthorizedAccessException)
                 {
                 }
+                catch (IOException)
+                {
+                }
             }
             else
             {
@@ -59,6 +59,9 @@ namespace Dionach.ShareAudit.Modules.Services
                 {
                 }
                 catch (UnauthorizedAccessException)
+                {
+                }
+                catch (IOException)
                 {
                 }
             }
