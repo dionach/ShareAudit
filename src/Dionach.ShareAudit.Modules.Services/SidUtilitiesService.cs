@@ -63,7 +63,7 @@ namespace Dionach.ShareAudit.Modules.Services
                 }
                 else
                 {
-                    _sidCache.TryAdd(sid, name.ToString());
+                    _sidCache.TryAdd(sid, sid);
                 }
             }
 
